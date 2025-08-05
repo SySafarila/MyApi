@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MyApi.Data;
 using MyApi.Models;
 using MyApi.Requests;
 
@@ -8,60 +10,94 @@ namespace MyApi.Controllers
     [Route("blogs")]
     public class BlogController : Controller
     {
-        [HttpGet("{id}")]
-        public ActionResult Detail(int id)
+        private readonly AppDbContext _context;
+        public BlogController(AppDbContext context)
         {
-            var blog = new Blog();
-            blog.id = id;
-            blog.title = "Title for the first article";
-            blog.description = "Description for the first article";
-            blog.content = "Content for the first article";
-            blog.updated_at = DateTime.Now;
-            blog.created_at = DateTime.Now;
+            _context = context;
+        }
 
-            return Ok(blog);
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Blog>> GetById(int id)
+        {
+            var blog = await _context.Blogs.FindAsync(id);
+            if (blog == null)
+            {
+                return NotFound();
+            }
+            return blog;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Blog>> All()
+        public async Task<ActionResult<IEnumerable<Blog>>> GetAll([FromQuery] string? searchTitle, [FromQuery] string? sort = "asc")
         {
-            var blogs = new List<Blog>
+            var query = _context.Blogs.AsQueryable();
+
+            if (sort?.ToLower() == "desc")
             {
-                new Blog
-                {
-                    id = 1,
-                    title = "Title 1",
-                    description = "Description 1",
-                    content = "Content 1",
-                    created_at = DateTime.Now,
-                    updated_at = DateTime.Now,
-                },
-                new Blog
-                {
-                    id = 2,
-                    title = "Title 2",
-                    description = "Description 2",
-                    content = "Content 2",
-                    created_at = DateTime.Now,
-                    updated_at = DateTime.Now,
-                }
-            };
+                query = query.OrderByDescending(blog => blog.id);
+            }
+            else
+            {
+                query = query.OrderBy(blog => blog.id);
+            }
+
+            if (searchTitle != null)
+            {
+                query = query.Where(blog => blog.title.Contains(searchTitle));
+            }
+
+            var blogs = await query.ToListAsync();
 
             return Ok(blogs);
         }
 
         [HttpPost]
-        public ActionResult Store([FromBody] BlogRequest data)
+        public async Task<ActionResult<Blog>> Store(BlogRequest req)
         {
             var blog = new Blog
             {
-                id = 1,
-                content = data.content,
-                description = data.description,
-                title = data.title,
-                created_at = DateTime.Now,
-                updated_at = DateTime.Now,
+                title = req.title,
+                content = req.content,
+                description = req.description,
+                created_at = DateTime.UtcNow,
+                updated_at = DateTime.UtcNow
             };
+
+            _context.Blogs.Add(blog);
+            await _context.SaveChangesAsync();
+
+            return Ok(blog);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var blog = await _context.Blogs.FindAsync(id);
+            if (blog == null)
+            {
+                return NotFound();
+            }
+
+            _context.Blogs.Remove(blog);
+            await _context.SaveChangesAsync();
+            return Ok(blog);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, BlogRequest req)
+        {
+            var blog = await _context.Blogs.FindAsync(id);
+            if(blog == null)
+            {
+                return NotFound();
+            }
+
+            blog.title = req.title;
+            blog.content = req.content;
+            blog.description = req.description;
+            blog.updated_at = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
 
             return Ok(blog);
         }
