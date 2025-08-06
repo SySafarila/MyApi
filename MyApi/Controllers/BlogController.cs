@@ -22,8 +22,14 @@ namespace MyApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Blog>> GetById(int id)
         {
-            var blog = await _blogService.GetByIdAsync(id);
-            return blog;
+            try
+            {
+                var blog = await _blogService.GetByIdAsync(id);
+                return blog;
+            } catch
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet]
@@ -37,24 +43,42 @@ namespace MyApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Blog>> Store(BlogRequest req)
         {
-            await _blogService.AddAsync(req);
+            try
+            {
+                await _blogService.AddAsync(req);
 
-            return Ok(new { message = "Blog created" });
+                return Ok(new { message = "Blog created" });
+            } catch
+            {
+                return BadRequest();
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _blogService.DeleteAsync(id);
-            return Ok(new { message = "Blog deleted" });
+            try
+            {
+                await _blogService.DeleteAsync(id);
+                return Ok(new { message = "Blog deleted" });
+            } catch
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, BlogRequest req)
         {
-            await _blogService.UpdateAsync(id, req);
+            try
+            {
+                await _blogService.UpdateAsync(id, req);
 
-            return Ok(new { message = "Blog updated" });
+                return Ok(new { message = "Blog updated" });
+            } catch
+            {
+                return BadRequest();
+            }
         }
     }
 }
