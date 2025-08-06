@@ -14,9 +14,29 @@ namespace MyApi.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Blog>> GetAllAsync()
+        public async Task<IEnumerable<Blog>> GetAllAsync(string? searchTitle, string? sort)
         {
-            return await _context.Blogs.ToListAsync();
+            var query = _context.Blogs.AsQueryable();
+
+            if (searchTitle != null)
+            {
+                query = query.Where(blog => blog.title.Contains(searchTitle));
+            }
+
+            switch (sort)
+            {
+                case "asc":
+                    query = query.OrderBy(blog => blog.id);
+                    break;
+                case "desc":
+                    query = query.OrderByDescending(blog => blog.id);
+                    break;
+                default:
+                    query = query.OrderByDescending(blog => blog.id);
+                    break;
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<Blog> GetByIdAsync(int id)

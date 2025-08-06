@@ -29,7 +29,7 @@ namespace MyApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Blog>>> GetAll([FromQuery] string? searchTitle, [FromQuery] string? sort = "asc")
         {
-            var blogs = await _blogService.GetAllAsync();
+            var blogs = await _blogService.GetAllAsync(searchTitle?.ToLower(), sort?.ToLower());
 
             return Ok(blogs);
         }

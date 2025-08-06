@@ -5,7 +5,7 @@ namespace MyApi.Services
 {
     public interface IBlogService
     {
-        Task<IEnumerable<Blog>> GetAllAsync();
+        Task<IEnumerable<Blog>> GetAllAsync(string? searchTitle, string? sort);
         Task<Blog> GetByIdAsync(int id);
         Task AddAsync(BlogRequest req);
         Task UpdateAsync(int id, BlogRequest req);
