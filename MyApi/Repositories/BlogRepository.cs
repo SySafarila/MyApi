@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyApi.Data;
+using MyApi.Exceptions;
 using MyApi.Models;
 using MyApi.Requests;
 
@@ -44,7 +45,7 @@ namespace MyApi.Repositories
             var blog = await _context.Blogs.FindAsync(id);
             if (blog == null)
             {
-                throw new Exception("Blog not found");
+                throw new HttpException("Blog not found", 404);
             }
             return blog;
         }
@@ -68,7 +69,7 @@ namespace MyApi.Repositories
             var blog = await _context.Blogs.FindAsync(id);
             if (blog == null)
             {
-                throw new Exception("Blog not found");
+                throw new HttpException("Blog not found", 404);
             }
             blog.title = req.title;
             blog.description = req.description;
@@ -83,7 +84,7 @@ namespace MyApi.Repositories
             var blog = await _context.Blogs.FindAsync(id);
             if(blog == null)
             {
-                throw new Exception("Blog not found");
+                throw new HttpException("Blog not found", 404);
             }
 
             _context.Blogs.Remove(blog);

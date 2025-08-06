@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MyApi.Data;
 using MyApi.Models;
 using MyApi.Requests;
 using MyApi.Services;
@@ -11,25 +9,17 @@ namespace MyApi.Controllers
     [Route("blogs")]
     public class BlogController : Controller
     {
-        private readonly AppDbContext _context;
         private readonly IBlogService _blogService;
-        public BlogController(AppDbContext context, IBlogService blogService)
+        public BlogController(IBlogService blogService)
         {
-            _context = context;
             _blogService = blogService;
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Blog>> GetById(int id)
         {
-            try
-            {
-                var blog = await _blogService.GetByIdAsync(id);
-                return blog;
-            } catch
-            {
-                return NotFound();
-            }
+            var blog = await _blogService.GetByIdAsync(id);
+            return blog;
         }
 
         [HttpGet]
@@ -43,42 +33,24 @@ namespace MyApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Blog>> Store(BlogRequest req)
         {
-            try
-            {
-                await _blogService.AddAsync(req);
+            await _blogService.AddAsync(req);
 
-                return Ok(new { message = "Blog created" });
-            } catch
-            {
-                return BadRequest();
-            }
+            return Ok(new { message = "Blog created" });
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            try
-            {
-                await _blogService.DeleteAsync(id);
-                return Ok(new { message = "Blog deleted" });
-            } catch
-            {
-                return BadRequest();
-            }
+            await _blogService.DeleteAsync(id);
+            return Ok(new { message = "Blog deleted" });
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, BlogRequest req)
         {
-            try
-            {
-                await _blogService.UpdateAsync(id, req);
+            await _blogService.UpdateAsync(id, req);
 
-                return Ok(new { message = "Blog updated" });
-            } catch
-            {
-                return BadRequest();
-            }
+            return Ok(new { message = "Blog updated" });
         }
     }
 }
