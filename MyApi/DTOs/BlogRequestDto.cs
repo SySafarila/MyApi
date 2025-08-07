@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyApi.Requests
+namespace MyApi.DTOs
 {
-    public class BlogRequest
+    public class BlogRequestDto
     {
         [Required]
         [StringLength(100)]

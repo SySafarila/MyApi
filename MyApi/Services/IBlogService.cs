@@ -1,6 +1,5 @@
 ﻿using MyApi.DTOs;
 using MyApi.Models;
-using MyApi.Requests;
 
 namespace MyApi.Services
 {
@@ -8,8 +7,8 @@ namespace MyApi.Services
     {
         Task<IEnumerable<BlogDto>> GetAllAsync(string? searchTitle, string? sort);
         Task<BlogDetailDto> GetByIdAsync(int id);
-        Task AddAsync(BlogRequest req);
-        Task UpdateAsync(int id, BlogRequest req);
+        Task AddAsync(BlogRequestDto req);
+        Task UpdateAsync(int id, BlogRequestDto req);
         Task DeleteAsync(int id);
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyApi.DTOs;
 using MyApi.Models;
-using MyApi.Requests;
 using MyApi.Services;
 
 namespace MyApi.Controllers
@@ -32,7 +31,7 @@ namespace MyApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Blog>> Store(BlogRequest req)
+        public async Task<ActionResult<Blog>> Store(BlogRequestDto req)
         {
             await _blogService.AddAsync(req);
 
@@ -47,7 +46,7 @@ namespace MyApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, BlogRequest req)
+        public async Task<ActionResult> Update(int id, BlogRequestDto req)
         {
             await _blogService.UpdateAsync(id, req);
 

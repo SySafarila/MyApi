@@ -3,7 +3,6 @@ using MyApi.Data;
 using MyApi.DTOs;
 using MyApi.Exceptions;
 using MyApi.Models;
-using MyApi.Requests;
 
 namespace MyApi.Repositories
 {
@@ -80,7 +79,7 @@ namespace MyApi.Repositories
             };
         }
 
-        public async Task AddAsync(BlogRequest req)
+        public async Task AddAsync(BlogRequestDto req)
         {
             var blog = new Blog
             {
@@ -94,7 +93,7 @@ namespace MyApi.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(int id, BlogRequest req)
+        public async Task UpdateAsync(int id, BlogRequestDto req)
         {
             var blog = await _context.Blogs.FindAsync(id);
             if (blog == null)
