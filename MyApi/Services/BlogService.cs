@@ -13,9 +13,10 @@ namespace MyApi.Services
             _blogRepository = blogRepository;
         }
 
-        public async Task AddAsync(BlogRequestDto req)
+        public async Task<BlogDetailDto> AddAsync(BlogRequestDto req)
         {
-            await _blogRepository.AddAsync(req);
+            var blog = await _blogRepository.AddAsync(req);
+            return blog;
         }
 
         public async Task DeleteAsync(int id)
@@ -33,9 +34,9 @@ namespace MyApi.Services
             return await _blogRepository.GetByIdAsync(id);
         }
 
-        public async Task UpdateAsync(int id, BlogRequestDto req)
+        public async Task<BlogDetailDto> UpdateAsync(int id, BlogRequestDto req)
         {
-            await _blogRepository.UpdateAsync(id, req);
+            return await _blogRepository.UpdateAsync(id, req);
         }
     }
 }

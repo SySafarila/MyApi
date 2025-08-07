@@ -31,11 +31,11 @@ namespace MyApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Blog>> Store(BlogRequestDto req)
+        public async Task<ActionResult<BlogDetailDto>> Store(BlogRequestDto req)
         {
-            await _blogService.AddAsync(req);
+            var blog = await _blogService.AddAsync(req);
 
-            return Ok(new { message = "Blog created" });
+            return Ok(blog);
         }
 
         [HttpDelete("{id}")]
@@ -46,11 +46,11 @@ namespace MyApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, BlogRequestDto req)
+        public async Task<ActionResult<BlogDetailDto>> Update(int id, BlogRequestDto req)
         {
-            await _blogService.UpdateAsync(id, req);
+            var blog = await _blogService.UpdateAsync(id, req);
 
-            return Ok(new { message = "Blog updated" });
+            return Ok(blog);
         }
     }
 }

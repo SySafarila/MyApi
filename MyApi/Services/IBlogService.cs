@@ -7,8 +7,8 @@ namespace MyApi.Services
     {
         Task<IEnumerable<BlogDto>> GetAllAsync(string? searchTitle, string? sort);
         Task<BlogDetailDto> GetByIdAsync(int id);
-        Task AddAsync(BlogRequestDto req);
-        Task UpdateAsync(int id, BlogRequestDto req);
+        Task<BlogDetailDto> AddAsync(BlogRequestDto req);
+        Task<BlogDetailDto> UpdateAsync(int id, BlogRequestDto req);
         Task DeleteAsync(int id);
     }
 }

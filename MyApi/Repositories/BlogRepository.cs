@@ -79,7 +79,7 @@ namespace MyApi.Repositories
             };
         }
 
-        public async Task AddAsync(BlogRequestDto req)
+        public async Task<BlogDetailDto> AddAsync(BlogRequestDto req)
         {
             var blog = new Blog
             {
@@ -91,9 +91,19 @@ namespace MyApi.Repositories
             };
             await _context.Blogs.AddAsync(blog);
             await _context.SaveChangesAsync();
+            return new BlogDetailDto
+            {
+                id = blog.id,
+                title = blog.title,
+                description = blog.description,
+                content = blog.content,
+                views = blog.views,
+                created_at = blog.created_at,
+                updated_at = blog.updated_at
+            };
         }
 
-        public async Task UpdateAsync(int id, BlogRequestDto req)
+        public async Task<BlogDetailDto> UpdateAsync(int id, BlogRequestDto req)
         {
             var blog = await _context.Blogs.FindAsync(id);
             if (blog == null)
@@ -106,6 +116,17 @@ namespace MyApi.Repositories
             blog.updated_at = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
+
+            return new BlogDetailDto
+            {
+                id = blog.id,
+                content = blog.content,
+                description = blog.description,
+                title = req.title,
+                created_at = blog.created_at,
+                updated_at = blog.updated_at,
+                views = blog.views
+            };
         }
 
         public async Task DeleteAsync(int id)
