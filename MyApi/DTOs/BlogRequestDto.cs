@@ -6,11 +6,11 @@ namespace MyApi.DTOs
     {
         [Required]
         [StringLength(100)]
-        public string title { get; set; }
+        public required string title { get; set; }
         [Required]
         [StringLength(100)]
-        public string description { get; set; }
+        public required string description { get; set; }
         [Required]
-        public string content { get; set; }
+        public required string content { get; set; }
     }
 }

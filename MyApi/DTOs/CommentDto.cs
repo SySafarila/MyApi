@@ -2,7 +2,7 @@
 {
     public class CommentDto : BaseDto
     {
-        public int blog_id { get; set; }
-        public string content { get; set; }
+        public required int blog_id { get; set; }
+        public required string content { get; set; }
     }
 }
