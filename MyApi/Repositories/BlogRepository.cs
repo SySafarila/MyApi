@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyApi.Data;
+using MyApi.DTOs;
 using MyApi.Exceptions;
 using MyApi.Models;
 using MyApi.Requests;
@@ -15,7 +16,7 @@ namespace MyApi.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Blog>> GetAllAsync(string? searchTitle, string? sort)
+        public async Task<IEnumerable<BlogDto>> GetAllAsync(string? searchTitle, string? sort)
         {
             var query = _context.Blogs.AsQueryable();
 
@@ -37,17 +38,46 @@ namespace MyApi.Repositories
                     break;
             }
 
-            return await query.ToListAsync();
+            var result = query.Select(b => new BlogDto
+            {
+                id = b.id,
+                description = b.description,
+                title = b.title,
+                created_at = b.created_at,
+                updated_at = b.updated_at,
+                views = b.views
+            });
+
+            return await result.ToListAsync();
         }
 
-        public async Task<Blog> GetByIdAsync(int id)
+        public async Task<BlogDetailDto> GetByIdAsync(int id)
         {
-            var blog = await _context.Blogs.FindAsync(id);
+            var blog = await _context.Blogs.Include(b => b.comments).FirstOrDefaultAsync(b => b.id == id);
             if (blog == null)
             {
                 throw new HttpException("Blog not found", 404);
             }
-            return blog;
+            blog.views++;
+            await _context.SaveChangesAsync();
+            return new BlogDetailDto
+            {
+                id = blog.id,
+                title = blog.title,
+                description = blog.description,
+                content = blog.content,
+                views = blog.views,
+                created_at = blog.created_at,
+                updated_at = blog.updated_at,
+                comments = blog.comments.Select(c => new CommentDto
+                {
+                    id = c.id,
+                    blog_id = c.blog_id,
+                    content = c.content,
+                    created_at = c.created_at,
+                    updated_at = c.updated_at
+                }).ToList()
+            };
         }
 
         public async Task AddAsync(BlogRequest req)

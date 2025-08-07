@@ -1,4 +1,5 @@
-﻿using MyApi.Models;
+﻿using MyApi.DTOs;
+using MyApi.Models;
 using MyApi.Repositories;
 using MyApi.Requests;
 
@@ -23,12 +24,12 @@ namespace MyApi.Services
             await _blogRepository.DeleteAsync(id);
         }
 
-        public async Task<IEnumerable<Blog>> GetAllAsync(string? searchTitle, string? sort)
+        public async Task<IEnumerable<BlogDto>> GetAllAsync(string? searchTitle, string? sort)
         {
             return await _blogRepository.GetAllAsync(searchTitle, sort);
         }
 
-        public async Task<Blog> GetByIdAsync(int id)
+        public async Task<BlogDetailDto> GetByIdAsync(int id)
         {
             return await _blogRepository.GetByIdAsync(id);
         }

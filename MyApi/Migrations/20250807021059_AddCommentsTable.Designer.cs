@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyApi.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250807021059_AddCommentsTable")]
+    partial class AddCommentsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,7 +67,7 @@ namespace MyApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
 
-                    b.Property<int>("blog_id")
+                    b.Property<int>("BlogId")
                         .HasColumnType("integer");
 
                     b.Property<string>("content")
@@ -79,7 +82,7 @@ namespace MyApi.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("blog_id");
+                    b.HasIndex("BlogId");
 
                     b.ToTable("Comments");
                 });
@@ -87,8 +90,8 @@ namespace MyApi.Migrations
             modelBuilder.Entity("MyApi.Models.Comment", b =>
                 {
                     b.HasOne("MyApi.Models.Blog", "Blog")
-                        .WithMany("comments")
-                        .HasForeignKey("blog_id")
+                        .WithMany("Comments")
+                        .HasForeignKey("BlogId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -97,7 +100,7 @@ namespace MyApi.Migrations
 
             modelBuilder.Entity("MyApi.Models.Blog", b =>
                 {
-                    b.Navigation("comments");
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

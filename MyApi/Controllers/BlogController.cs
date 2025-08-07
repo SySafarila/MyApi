@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MyApi.DTOs;
 using MyApi.Models;
 using MyApi.Requests;
 using MyApi.Services;
@@ -16,7 +17,7 @@ namespace MyApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Blog>> GetById(int id)
+        public async Task<ActionResult<BlogDetailDto>> GetById(int id)
         {
             var blog = await _blogService.GetByIdAsync(id);
             return blog;
