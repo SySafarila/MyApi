@@ -10,9 +10,11 @@ namespace MyApi.Controllers
     public class BlogController : Controller
     {
         private readonly IBlogService _blogService;
-        public BlogController(IBlogService blogService)
+        private readonly ICommentService _commentService;
+        public BlogController(IBlogService blogService, ICommentService commentService)
         {
             _blogService = blogService;
+            _commentService = commentService;
         }
 
         [HttpGet("{id}")]
@@ -51,6 +53,25 @@ namespace MyApi.Controllers
             var blog = await _blogService.UpdateAsync(id, req);
 
             return Ok(blog);
+        }
+
+        [HttpPost("{id}/comments")]
+        public async Task<ActionResult> SendComment(int id, CommentRequestDto req)
+        {
+            var blog = await _blogService.GetByIdAsync(id);
+            var comment = await _commentService.AddAsync(blog.id, req);
+            return Ok(comment);
+        }
+
+        [HttpDelete("{blogId}/comments/{commentId}")]
+        public async Task<ActionResult> DeleteComment(int blogId, int commentId)
+        {
+            await _commentService.DeleteAsync(blogId, commentId);
+
+            return Ok(new
+            {
+                message = "Comment deleted"
+            });
         }
     }
 }
