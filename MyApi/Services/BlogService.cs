@@ -13,7 +13,7 @@ namespace MyApi.Services
             _blogRepository = blogRepository;
         }
 
-        public async Task<BlogDetailDto> AddAsync(BlogRequestDto req)
+        public async Task<Blog> AddAsync(BlogRequestDto req)
         {
             var blog = await _blogRepository.AddAsync(req);
             return blog;
@@ -24,19 +24,19 @@ namespace MyApi.Services
             await _blogRepository.DeleteAsync(id);
         }
 
-        public async Task<IEnumerable<BlogDto>> GetAllAsync(string? searchTitle, string? sort)
+        public async Task<IEnumerable<Blog>> GetAllAsync(string? searchTitle, string? sort)
         {
             return await _blogRepository.GetAllAsync(searchTitle, sort);
         }
 
-        public async Task<BlogDetailDto> GetByIdAsync(int id)
+        public async Task<Blog> GetByIdAsync(int id)
         {
             return await _blogRepository.GetByIdAsync(id);
         }
 
-        public async Task<BlogDetailDto> UpdateAsync(int id, BlogRequestDto req)
+        public async Task<Blog> UpdateAsync(Blog blog)
         {
-            return await _blogRepository.UpdateAsync(id, req);
+            return await _blogRepository.UpdateAsync(blog);
         }
     }
 }

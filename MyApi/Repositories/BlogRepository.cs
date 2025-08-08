@@ -15,7 +15,7 @@ namespace MyApi.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<BlogDto>> GetAllAsync(string? searchTitle, string? sort)
+        public async Task<IEnumerable<Blog>> GetAllAsync(string? searchTitle, string? sort)
         {
             var query = _context.Blogs.AsQueryable();
 
@@ -37,49 +37,20 @@ namespace MyApi.Repositories
                     break;
             }
 
-            var result = query.Select(b => new BlogDto
-            {
-                id = b.id,
-                description = b.description,
-                title = b.title,
-                created_at = b.created_at,
-                updated_at = b.updated_at,
-                views = b.views
-            });
-
-            return await result.ToListAsync();
+            return await query.ToListAsync();
         }
 
-        public async Task<BlogDetailDto> GetByIdAsync(int id)
+        public async Task<Blog> GetByIdAsync(int id)
         {
             var blog = await _context.Blogs.Include(b => b.comments).FirstOrDefaultAsync(b => b.id == id);
             if (blog == null)
             {
                 throw new HttpException("Blog not found", 404);
             }
-            blog.views++;
-            await _context.SaveChangesAsync();
-            return new BlogDetailDto
-            {
-                id = blog.id,
-                title = blog.title,
-                description = blog.description,
-                content = blog.content,
-                views = blog.views,
-                created_at = blog.created_at,
-                updated_at = blog.updated_at,
-                comments = blog.comments.Select(c => new CommentDto
-                {
-                    id = c.id,
-                    blog_id = c.blog_id,
-                    content = c.content,
-                    created_at = c.created_at,
-                    updated_at = c.updated_at
-                }).ToList()
-            };
+            return blog;
         }
 
-        public async Task<BlogDetailDto> AddAsync(BlogRequestDto req)
+        public async Task<Blog> AddAsync(BlogRequestDto req)
         {
             var blog = new Blog
             {
@@ -91,42 +62,15 @@ namespace MyApi.Repositories
             };
             await _context.Blogs.AddAsync(blog);
             await _context.SaveChangesAsync();
-            return new BlogDetailDto
-            {
-                id = blog.id,
-                title = blog.title,
-                description = blog.description,
-                content = blog.content,
-                views = blog.views,
-                created_at = blog.created_at,
-                updated_at = blog.updated_at
-            };
+            return blog;
         }
 
-        public async Task<BlogDetailDto> UpdateAsync(int id, BlogRequestDto req)
+        public async Task<Blog> UpdateAsync(Blog blog)
         {
-            var blog = await _context.Blogs.FindAsync(id);
-            if (blog == null)
-            {
-                throw new HttpException("Blog not found", 404);
-            }
-            blog.title = req.title;
-            blog.description = req.description;
-            blog.content = req.content;
-            blog.updated_at = DateTime.UtcNow;
-
+            _context.Blogs.Update(blog);
             await _context.SaveChangesAsync();
 
-            return new BlogDetailDto
-            {
-                id = blog.id,
-                content = blog.content,
-                description = blog.description,
-                title = req.title,
-                created_at = blog.created_at,
-                updated_at = blog.updated_at,
-                views = blog.views
-            };
+            return blog;
         }
 
         public async Task DeleteAsync(int id)

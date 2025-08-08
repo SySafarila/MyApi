@@ -5,10 +5,10 @@ namespace MyApi.Services
 {
     public interface IBlogService
     {
-        Task<IEnumerable<BlogDto>> GetAllAsync(string? searchTitle, string? sort);
-        Task<BlogDetailDto> GetByIdAsync(int id);
-        Task<BlogDetailDto> AddAsync(BlogRequestDto req);
-        Task<BlogDetailDto> UpdateAsync(int id, BlogRequestDto req);
+        Task<IEnumerable<Blog>> GetAllAsync(string? searchTitle, string? sort);
+        Task<Blog> GetByIdAsync(int id);
+        Task<Blog> AddAsync(BlogRequestDto req);
+        Task<Blog> UpdateAsync(Blog blog);
         Task DeleteAsync(int id);
     }
 }
