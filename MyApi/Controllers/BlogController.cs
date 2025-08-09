@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyApi.DTOs;
-using MyApi.Models;
 using MyApi.Services;
 
 namespace MyApi.Controllers
@@ -21,7 +20,7 @@ namespace MyApi.Controllers
         public async Task<ActionResult<IEnumerable<BlogDto>>> GetAll([FromQuery] string? searchTitle, [FromQuery] string? sort = "asc")
         {
             var blogs = await _blogService.GetAllAsync(searchTitle?.ToLower(), sort?.ToLower());
-            var blogDto = blogs.Select(b => new BlogDto
+            return blogs.Select(b => new BlogDto
             {
                 id = b.id,
                 title = b.title,
@@ -30,8 +29,6 @@ namespace MyApi.Controllers
                 created_at = b.created_at,
                 updated_at = b.updated_at
             }).ToList();
-
-            return blogDto;
         }
 
         [HttpGet("{id}")]
@@ -40,7 +37,7 @@ namespace MyApi.Controllers
             var blog = await _blogService.GetByIdAsync(id);
             blog.views++;
             await _blogService.UpdateAsync(blog);
-            var response = new BlogDetailDto
+            return new BlogDetailDto
             {
                 id = blog.id,
                 title = blog.title,
@@ -58,7 +55,6 @@ namespace MyApi.Controllers
                     updated_at = c.updated_at
                 }).ToList()
             };
-            return response;
         }
 
         [HttpPost]
@@ -110,8 +106,7 @@ namespace MyApi.Controllers
         public async Task<ActionResult<CommentDto>> SendComment(int id, CommentRequestDto req)
         {
             var blog = await _blogService.GetByIdAsync(id);
-            var comment = await _commentService.AddAsync(blog.id, req);
-            return comment;
+            return await _commentService.AddAsync(blog.id, req);
         }
 
         [HttpDelete("{blogId}/comments/{commentId}")]
@@ -119,10 +114,7 @@ namespace MyApi.Controllers
         {
             await _commentService.DeleteAsync(blogId, commentId);
 
-            return Ok(new
-            {
-                message = "Comment deleted"
-            });
+            return Ok(new { message = "Comment deleted" });
         }
     }
 }

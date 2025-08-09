@@ -15,8 +15,7 @@ namespace MyApi.Services
 
         public async Task<Blog> AddAsync(BlogRequestDto req)
         {
-            var blog = await _blogRepository.AddAsync(req);
-            return blog;
+            return await _blogRepository.AddAsync(req);
         }
 
         public async Task DeleteAsync(int id)
