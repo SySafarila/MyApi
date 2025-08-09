@@ -15,7 +15,7 @@ namespace MyApi.Repositories
             _context = context;
         }
 
-        public async Task<CommentDto> AddAsync(int blogId, CommentRequestDto request)
+        public async Task<Comment> AddAsync(int blogId, CommentRequestDto request)
         {
             var comment = new Comment
             {
@@ -28,7 +28,7 @@ namespace MyApi.Repositories
             await _context.Comments.AddAsync(comment);
             await _context.SaveChangesAsync();
 
-            return new CommentDto { blog_id = blogId, content = comment.content };
+            return comment;
         }
 
         public async Task DeleteAsync(int blogId, int id)
@@ -44,7 +44,7 @@ namespace MyApi.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<CommentDto> GetByIdAsync(int id)
+        public async Task<Comment> GetByIdAsync(int id)
         {
             var comment = await _context.Comments.FindAsync(id);
             if (comment == null)
@@ -52,17 +52,10 @@ namespace MyApi.Repositories
                 throw new HttpException("Comment not found", 404);
             }
 
-            return new CommentDto
-            {
-                blog_id = comment.blog_id,
-                content = comment.content,
-                created_at = comment.created_at,
-                updated_at = comment.updated_at,
-                id = comment.id
-            };
+            return comment;
         }
 
-        public async Task<CommentDto> UpdateAsync(int id, CommentRequestDto request)
+        public async Task<Comment> UpdateAsync(int id, CommentRequestDto request)
         {
             var comment = await _context.Comments.FindAsync(id);
             if (comment == null)
@@ -74,15 +67,7 @@ namespace MyApi.Repositories
             comment.updated_at = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
-
-            return new CommentDto
-            {
-                id = comment.id,
-                blog_id = comment.blog_id,
-                content = comment.content,
-                created_at = comment.created_at,
-                updated_at = comment.updated_at
-            };
+            return comment;
         }
     }
 }

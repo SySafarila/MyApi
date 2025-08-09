@@ -106,7 +106,15 @@ namespace MyApi.Controllers
         public async Task<ActionResult<CommentDto>> SendComment(int id, CommentRequestDto req)
         {
             var blog = await _blogService.GetByIdAsync(id);
-            return await _commentService.AddAsync(blog.id, req);
+            var comment = await _commentService.AddAsync(blog.id, req);
+            return new CommentDto
+            {
+                id = comment.id,
+                blog_id = comment.blog_id,
+                content = comment.content,
+                created_at = comment.created_at,
+                updated_at = comment.updated_at
+            };
         }
 
         [HttpDelete("{blogId}/comments/{commentId}")]

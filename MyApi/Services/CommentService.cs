@@ -1,4 +1,5 @@
 ﻿using MyApi.DTOs;
+using MyApi.Models;
 using MyApi.Repositories;
 
 namespace MyApi.Services
@@ -12,7 +13,7 @@ namespace MyApi.Services
             _commentRepository = commentRepository;
         }
 
-        public async Task<CommentDto> AddAsync(int blogId, CommentRequestDto req)
+        public async Task<Comment> AddAsync(int blogId, CommentRequestDto req)
         {
             var comment = await _commentRepository.AddAsync(blogId, req);
             return comment;
@@ -23,7 +24,7 @@ namespace MyApi.Services
             await _commentRepository.DeleteAsync(blogId, id);
         }
 
-        public async Task<CommentDto> UpdateAsync(int id, CommentRequestDto req)
+        public async Task<Comment> UpdateAsync(int id, CommentRequestDto req)
         {
             var comment = await _commentRepository.UpdateAsync(id, req);
             return comment;
