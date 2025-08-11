@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MyApi.Data;
 using MyApi.Middlewares;
+using MyApi.Profiles;
 using MyApi.Repositories;
 using MyApi.Services;
 
@@ -18,6 +19,8 @@ builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 var app = builder.Build();
 

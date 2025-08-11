@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using MyApi.DTOs;
 using MyApi.Services;
 
@@ -10,25 +11,21 @@ namespace MyApi.Controllers
     {
         private readonly IBlogService _blogService;
         private readonly ICommentService _commentService;
-        public BlogController(IBlogService blogService, ICommentService commentService)
+        private readonly IMapper _mapper;
+        public BlogController(IBlogService blogService, ICommentService commentService, IMapper mapper)
         {
             _blogService = blogService;
             _commentService = commentService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BlogDto>>> GetAll([FromQuery] string? searchTitle, [FromQuery] string? sort = "asc")
         {
             var blogs = await _blogService.GetAllAsync(searchTitle?.ToLower(), sort?.ToLower());
-            return blogs.Select(b => new BlogDto
-            {
-                id = b.id,
-                title = b.title,
-                description = b.description,
-                views = b.views,
-                created_at = b.created_at,
-                updated_at = b.updated_at
-            }).ToList();
+            var blogDtos = _mapper.Map<IEnumerable<BlogDto>>(blogs);
+
+            return Ok(blogDtos);
         }
 
         [HttpGet("{id}")]
@@ -37,41 +34,18 @@ namespace MyApi.Controllers
             var blog = await _blogService.GetByIdAsync(id);
             blog.views++;
             await _blogService.UpdateAsync(blog);
-            return new BlogDetailDto
-            {
-                id = blog.id,
-                title = blog.title,
-                description = blog.description,
-                content = blog.content,
-                views = blog.views,
-                created_at = blog.created_at,
-                updated_at = blog.updated_at,
-                comments = blog.comments.Select(c => new CommentDto
-                {
-                    id = c.id,
-                    blog_id = c.blog_id,
-                    content = c.content,
-                    created_at = c.created_at,
-                    updated_at = c.updated_at
-                }).ToList()
-            };
+            var blogDetailDto = _mapper.Map<BlogDetailDto>(blog);
+
+            return Ok(blogDetailDto);
         }
 
         [HttpPost]
         public async Task<ActionResult<BlogDetailDto>> Store(BlogRequestDto req)
         {
             var blog = await _blogService.AddAsync(req);
+            var blogDetailDto = _mapper.Map<BlogDetailDto>(blog);
 
-            return new BlogDetailDto
-            {
-                id = blog.id,
-                title = blog.title,
-                description = blog.description,
-                content = blog.content,
-                views = blog.views,
-                created_at = blog.created_at,
-                updated_at = blog.updated_at
-            };
+            return Ok(blogDetailDto);
         }
 
         [HttpDelete("{id}")]
@@ -89,17 +63,9 @@ namespace MyApi.Controllers
             blog.description = req.description;
             blog.content = req.content;
             var blogUpdate = await _blogService.UpdateAsync(blog);
+            var blogDetailDto = _mapper.Map<BlogDetailDto>(blog);
 
-            return new BlogDetailDto
-            {
-                id = blogUpdate.id,
-                title = blogUpdate.title,
-                description = blogUpdate.description,
-                content = blogUpdate.content,
-                views = blogUpdate.views,
-                created_at = blogUpdate.created_at,
-                updated_at = blogUpdate.updated_at
-            };
+            return Ok(blogDetailDto);
         }
 
         [HttpPost("{id}/comments")]
@@ -107,28 +73,16 @@ namespace MyApi.Controllers
         {
             var blog = await _blogService.GetByIdAsync(id);
             var comment = await _commentService.AddAsync(blog.id, req);
-            return new CommentDto
-            {
-                id = comment.id,
-                blog_id = comment.blog_id,
-                content = comment.content,
-                created_at = comment.created_at,
-                updated_at = comment.updated_at
-            };
+            var commentDto = _mapper.Map<CommentDto>(comment);
+            return Ok(commentDto);
         }
 
         [HttpDelete("{blogId}/comments/{commentId}")]
         public async Task<ActionResult<CommentDto>> DeleteComment(int blogId, int commentId)
         {
             var comment = await _commentService.DeleteAsync(blogId, commentId);
-            return new CommentDto
-            {
-                id = comment.id,
-                blog_id = comment.blog_id,
-                content = comment.content,
-                created_at = comment.created_at,
-                updated_at = comment.updated_at
-            };
+            var commentDto = _mapper.Map<CommentDto>(comment);
+            return Ok(commentDto);
         }
     }
 }
