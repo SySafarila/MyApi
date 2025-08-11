@@ -33,7 +33,7 @@ namespace MyApi.Controllers
         {
             var blog = await _blogService.GetByIdAsync(id);
             blog.views++;
-            await _blogService.UpdateAsync(blog);
+            blog = await _blogService.UpdateAsync(blog);
             var blogDetailDto = _mapper.Map<BlogDetailDto>(blog);
 
             return Ok(blogDetailDto);
