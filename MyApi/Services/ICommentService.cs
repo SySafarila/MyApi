@@ -9,6 +9,6 @@ namespace MyApi.Services
         //Task<BlogDetailDto> GetByIdAsync(int id);
         Task<Comment> AddAsync(int blogId, CommentRequestDto req);
         Task<Comment> UpdateAsync(int id, CommentRequestDto req);
-        Task DeleteAsync(int blogId, int id);
+        Task<Comment> DeleteAsync(int blogId, int id);
     }
 }

@@ -56,7 +56,8 @@ namespace MyApi.Tests
             var result = await blogService.UpdateAsync(blog);
 
             // assert
-            Assert.Equal("Content Baru", blog.content);
+            Assert.Equal(result.content, blog.content);
+            Assert.Equal(result.id, blog.id);
 
             repoMock.Verify(r => r.UpdateAsync(blog), Times.Once);
         }
@@ -86,8 +87,8 @@ namespace MyApi.Tests
 
             // assert
             Assert.NotNull(result);
-            Assert.Equal("Unit Test Title", result.title);
-            Assert.Equal(10, result.views);
+            Assert.Equal(blog.title, result.title);
+            Assert.Equal(blog.views, result.views);
 
             // verifikasi jika method repo dipanggil
             repoMock.Verify(r => r.GetByIdAsync(1), Times.Once);
@@ -122,7 +123,7 @@ namespace MyApi.Tests
             var result = await blogService.AddAsync(request);
 
             Assert.NotNull(result);
-            Assert.Equal("Title 1", blog.title);
+            Assert.Equal(request.title, blog.title);
             Assert.Equal(0, blog.views);
             Assert.Equal(1, blog.id);
 

@@ -19,9 +19,10 @@ namespace MyApi.Services
             return comment;
         }
 
-        public async Task DeleteAsync(int blogId, int id)
+        public async Task<Comment> DeleteAsync(int blogId, int id)
         {
-            await _commentRepository.DeleteAsync(blogId, id);
+           var comment = await _commentRepository.DeleteAsync(blogId, id);
+            return comment;
         }
 
         public async Task<Comment> UpdateAsync(int id, CommentRequestDto req)

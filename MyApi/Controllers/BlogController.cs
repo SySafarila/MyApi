@@ -118,11 +118,17 @@ namespace MyApi.Controllers
         }
 
         [HttpDelete("{blogId}/comments/{commentId}")]
-        public async Task<ActionResult> DeleteComment(int blogId, int commentId)
+        public async Task<ActionResult<CommentDto>> DeleteComment(int blogId, int commentId)
         {
-            await _commentService.DeleteAsync(blogId, commentId);
-
-            return Ok(new { message = "Comment deleted" });
+            var comment = await _commentService.DeleteAsync(blogId, commentId);
+            return new CommentDto
+            {
+                id = comment.id,
+                blog_id = comment.blog_id,
+                content = comment.content,
+                created_at = comment.created_at,
+                updated_at = comment.updated_at
+            };
         }
     }
 }

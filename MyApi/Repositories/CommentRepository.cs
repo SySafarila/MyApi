@@ -31,7 +31,7 @@ namespace MyApi.Repositories
             return comment;
         }
 
-        public async Task DeleteAsync(int blogId, int id)
+        public async Task<Comment> DeleteAsync(int blogId, int id)
         {
             var query = _context.Comments.AsQueryable();
             query = query.Where(c => c.blog_id == blogId && c.id == id);
@@ -42,6 +42,7 @@ namespace MyApi.Repositories
             }
             _context.Comments.Remove(comment);
             await _context.SaveChangesAsync();
+            return comment;
         }
 
         public async Task<Comment> GetByIdAsync(int id)

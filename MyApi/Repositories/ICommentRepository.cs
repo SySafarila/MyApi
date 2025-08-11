@@ -9,6 +9,6 @@ namespace MyApi.Repositories
         Task<Comment> GetByIdAsync(int id);
         Task<Comment> AddAsync(int blogId, CommentRequestDto request);
         Task<Comment> UpdateAsync(int id, CommentRequestDto request);
-        Task DeleteAsync(int blogId, int id);
+        Task<Comment> DeleteAsync(int blogId, int id);
     }
 }
