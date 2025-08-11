@@ -49,10 +49,11 @@ namespace MyApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult<BlogDetailDto>> Delete(int id)
         {
-            await _blogService.DeleteAsync(id);
-            return Ok(new { message = "Blog deleted" });
+            var blog = await _blogService.DeleteAsync(id);
+            var blogDetailDto = _mapper.Map<BlogDetailDto>(blog);
+            return Ok(blogDetailDto);
         }
 
         [HttpPatch("{id}")]

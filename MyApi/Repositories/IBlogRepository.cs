@@ -9,6 +9,6 @@ namespace MyApi.Repositories
         Task<Blog> GetByIdAsync(int id);
         Task<Blog> AddAsync(BlogRequestDto request);
         Task<Blog> UpdateAsync(Blog blog);
-        Task DeleteAsync(int id);
+        Task<Blog> DeleteAsync(int id);
     }
 }

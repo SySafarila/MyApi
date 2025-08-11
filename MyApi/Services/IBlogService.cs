@@ -9,6 +9,6 @@ namespace MyApi.Services
         Task<Blog> GetByIdAsync(int id);
         Task<Blog> AddAsync(BlogRequestDto req);
         Task<Blog> UpdateAsync(Blog blog);
-        Task DeleteAsync(int id);
+        Task<Blog> DeleteAsync(int id);
     }
 }

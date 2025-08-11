@@ -73,7 +73,7 @@ namespace MyApi.Repositories
             return blog;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<Blog> DeleteAsync(int id)
         {
             var blog = await _context.Blogs.FindAsync(id);
             if(blog == null)
@@ -83,6 +83,7 @@ namespace MyApi.Repositories
 
             _context.Blogs.Remove(blog);
             await _context.SaveChangesAsync();
+            return blog;
         }
     }
 }

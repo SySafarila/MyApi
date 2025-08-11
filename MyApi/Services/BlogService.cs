@@ -18,9 +18,9 @@ namespace MyApi.Services
             return await _blogRepository.AddAsync(req);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<Blog> DeleteAsync(int id)
         {
-            await _blogRepository.DeleteAsync(id);
+            return await _blogRepository.DeleteAsync(id);
         }
 
         public async Task<IEnumerable<Blog>> GetAllAsync(string? searchTitle, string? sort)
