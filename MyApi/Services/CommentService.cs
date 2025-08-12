@@ -25,10 +25,15 @@ namespace MyApi.Services
             return comment;
         }
 
-        public async Task<Comment> UpdateAsync(int id, CommentRequestDto req)
+        public async Task<Comment> GetByIdAsync(int id)
         {
-            var comment = await _commentRepository.UpdateAsync(id, req);
+            var comment = await _commentRepository.GetByIdAsync(id);
             return comment;
+        }
+
+        public async Task<Comment> UpdateAsync(Comment comment)
+        {
+            return await _commentRepository.UpdateAsync(comment);
         }
     }
 }

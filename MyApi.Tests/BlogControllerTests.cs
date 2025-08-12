@@ -299,5 +299,161 @@ namespace MyApi.Tests
             mockMapper.Verify(m => m.Map<BlogDetailDto>(It.IsAny<Blog>()), Times.Once);
         }
 
+        [Fact]
+        public async Task CreateComment()
+        {
+            var blog = new Blog
+            {
+                id = 1,
+                content = "Content",
+                description = "Description",
+                title = "Title",
+                created_at = DateTime.UtcNow,
+                updated_at = DateTime.UtcNow,
+                views = 0
+            };
+            var commentRequest = new CommentRequestDto
+            {
+                content = "Comment"
+            };
+            var comment = new Comment
+            {
+                id = 1,
+                blog_id = blog.id,
+                content = commentRequest.content,
+                created_at = DateTime.UtcNow,
+                updated_at = DateTime.UtcNow,
+            };
+            var commentDto = new CommentDto
+            {
+                id = comment.id,
+                blog_id = comment.blog_id,
+                content = comment.content,
+                created_at = comment.created_at,
+                updated_at = comment.updated_at
+            };
+
+
+            var mockBlogService = new Mock<IBlogService>();
+            var mockCommentService = new Mock<ICommentService>();
+            var mockMapper = new Mock<IMapper>();
+
+            mockBlogService.Setup(s => s.GetByIdAsync(blog.id)).ReturnsAsync(blog);
+            mockCommentService.Setup(s => s.AddAsync(blog.id, commentRequest)).ReturnsAsync(comment);
+            mockMapper.Setup(m => m.Map<CommentDto>(comment)).Returns(commentDto);
+
+            var controller = new BlogController(mockBlogService.Object, mockCommentService.Object, mockMapper.Object);
+            var actionResult = await controller.SendComment(blog.id, commentRequest);
+            var okResult = actionResult.Result as OkObjectResult;
+            var resultDto = okResult?.Value as CommentDto;
+
+            Assert.NotNull(resultDto);
+            Assert.Equal(resultDto.content, commentDto.content);
+            Assert.Equal(resultDto.id, commentDto.id);
+
+            mockBlogService.Verify(s => s.GetByIdAsync(blog.id), Times.Once);
+            mockCommentService.Verify(s => s.AddAsync(blog.id, commentRequest), Times.Once);
+            mockMapper.Verify(m => m.Map<CommentDto>(comment), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteComment()
+        {
+            var blog = new Blog
+            {
+                id = 1,
+                content = "Content",
+                description = "Description",
+                title = "Title",
+                created_at = DateTime.UtcNow,
+                updated_at = DateTime.UtcNow,
+                views = 0
+            };
+            var commentRequest = new CommentRequestDto
+            {
+                content = "Comment"
+            };
+            var comment = new Comment
+            {
+                id = 1,
+                blog_id = blog.id,
+                content = commentRequest.content,
+                created_at = DateTime.UtcNow,
+                updated_at = DateTime.UtcNow,
+            };
+            var commentDto = new CommentDto
+            {
+                id = comment.id,
+                blog_id = comment.blog_id,
+                content = comment.content,
+                created_at = comment.created_at,
+                updated_at = comment.updated_at
+            };
+
+            var mockCommentService = new Mock<ICommentService>();
+            var mockMapper = new Mock<IMapper>();
+
+            mockCommentService.Setup(s => s.DeleteAsync(blog.id, comment.id)).ReturnsAsync(comment);
+            mockMapper.Setup(m => m.Map<CommentDto>(comment)).Returns(commentDto);
+
+            var controller = new BlogController(null, mockCommentService.Object, mockMapper.Object);
+            var actionResult = await controller.DeleteComment(blog.id, comment.id);
+            var okResult = actionResult.Result as OkObjectResult;
+            var resultDto = okResult?.Value as CommentDto;
+
+            Assert.NotNull(resultDto);
+            Assert.Equal(comment.id, resultDto.id);
+            Assert.Equal(comment.content, resultDto.content);
+
+            mockCommentService.Verify(s => s.DeleteAsync(blog.id, comment.id), Times.Once);
+            mockMapper.Verify(m => m.Map<CommentDto>(comment), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateComment()
+        {
+            var comment = new Comment
+            {
+                id = 1,
+                blog_id = 1,
+                content = "Content",
+                created_at = DateTime.UtcNow,
+                updated_at = DateTime.UtcNow,
+            };
+            var commentRequest = new CommentRequestDto
+            {
+                content = "Content Updated"
+            };
+            var updatedComment = new Comment
+            {
+                id = 1,
+                blog_id = 1,
+                content = "Content Updated",
+                created_at = comment.created_at,
+                updated_at = DateTime.UtcNow,
+            };
+            var commentDto = new CommentDto
+            {
+                id = 1,
+                blog_id = 1,
+                content = updatedComment.content,
+                created_at = updatedComment.created_at,
+                updated_at = updatedComment.updated_at
+            };
+
+            var mockCommentService = new Mock<ICommentService>();
+            var mockMapper = new Mock<IMapper>();
+
+            mockCommentService.Setup(s => s.GetByIdAsync(comment.id)).ReturnsAsync(comment);
+            mockCommentService.Setup(s => s.UpdateAsync(It.IsAny<Comment>())).ReturnsAsync(updatedComment);
+            mockMapper.Setup(m => m.Map<CommentDto>(It.IsAny<Comment>())).Returns(commentDto);
+
+            var controller = new BlogController(null, mockCommentService.Object, mockMapper.Object);
+            var actionResult = await controller.UpdateComment(comment.blog_id, comment.id, commentRequest);
+            var okResult = actionResult.Result as OkObjectResult;
+            var resultDto = okResult?.Value as CommentDto;
+
+            Assert.NotNull(resultDto);
+        }
     }
 }

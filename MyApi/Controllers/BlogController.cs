@@ -64,7 +64,7 @@ namespace MyApi.Controllers
             blog.description = req.description;
             blog.content = req.content;
             var blogUpdate = await _blogService.UpdateAsync(blog);
-            var blogDetailDto = _mapper.Map<BlogDetailDto>(blog);
+            var blogDetailDto = _mapper.Map<BlogDetailDto>(blogUpdate);
 
             return Ok(blogDetailDto);
         }
@@ -83,6 +83,16 @@ namespace MyApi.Controllers
         {
             var comment = await _commentService.DeleteAsync(blogId, commentId);
             var commentDto = _mapper.Map<CommentDto>(comment);
+            return Ok(commentDto);
+        }
+
+        [HttpPatch("{blogId}/comments/{commentId}")]
+        public async Task<ActionResult<CommentDto>> UpdateComment(int blogId, int commentId, CommentRequestDto req)
+        {
+            var comment = await _commentService.GetByIdAsync(commentId);
+            comment.content = req.content;
+            var updatedComment = await _commentService.UpdateAsync(comment);
+            var commentDto = _mapper.Map<CommentDto>(updatedComment);
             return Ok(commentDto);
         }
     }

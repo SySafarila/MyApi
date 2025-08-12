@@ -56,17 +56,9 @@ namespace MyApi.Repositories
             return comment;
         }
 
-        public async Task<Comment> UpdateAsync(int id, CommentRequestDto request)
+        public async Task<Comment> UpdateAsync(Comment comment)
         {
-            var comment = await _context.Comments.FindAsync(id);
-            if (comment == null)
-            {
-                throw new HttpException("Comment not found", 404);
-            }
-
-            comment.content = request.content;
-            comment.updated_at = DateTime.UtcNow;
-
+            _context.Comments.Update(comment);
             await _context.SaveChangesAsync();
             return comment;
         }

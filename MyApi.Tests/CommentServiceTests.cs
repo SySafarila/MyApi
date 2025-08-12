@@ -60,17 +60,26 @@ namespace MyApi.Tests
                 updated_at = DateTime.UtcNow,
             };
 
+            var updatedComment = new Comment
+            {
+                id = 1,
+                blog_id = 1,
+                content = req.content,
+                created_at = DateTime.UtcNow,
+                updated_at = DateTime.UtcNow,
+            };
+
             var repoMock = new Mock<ICommentRepository>();
-            repoMock.Setup(r => r.UpdateAsync(comment.id, req)).ReturnsAsync(comment);
+            repoMock.Setup(r => r.UpdateAsync(updatedComment)).ReturnsAsync(updatedComment);
 
             var commentService = new CommentService(repoMock.Object);
-            var result = await commentService.UpdateAsync(comment.id, req);
+            var result = await commentService.UpdateAsync(updatedComment);
 
             Assert.NotNull(result);
             Assert.Equal(result.content, req.content);
             Assert.Equal(result.id, comment.id);
 
-            repoMock.Verify(r => r.UpdateAsync(comment.id, req), Times.Once);
+            repoMock.Verify(r => r.UpdateAsync(updatedComment), Times.Once);
         }
 
         [Fact]
